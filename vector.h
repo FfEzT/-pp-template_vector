@@ -13,13 +13,13 @@
 #include <type_traits>
 #include <utility>
 
-// TODO инициализации поправь в конструкторах
+// TODO РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РїРѕРїСЂР°РІСЊ РІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°С…
 
 namespace constants {
     inline constexpr size_t realloc_factor = 2;
 }
 
-// а почему в std везде пишут constexpr
+// Р° РїРѕС‡РµРјСѓ РІ std РІРµР·РґРµ РїРёС€СѓС‚ constexpr
 namespace container {
     template<typename Type, typename Allocator = std::allocator<Type>>
     class vector {
@@ -42,7 +42,7 @@ namespace container {
         constexpr vector() noexcept : m_vector{ nullptr }
         {}
 
-        // делег конструктор как?
+        // РґРµР»РµРі РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєР°Рє?
         constexpr explicit vector(const_alloc_reference allocator) noexcept
             : m_allocator{ allocator }, vector()
         {}
@@ -77,15 +77,15 @@ namespace container {
         }
 
         // cpy
-        // ахаххахаха это copy
-        // никогда не думал что memcpy прикольно читается: "Мэм, сру"
-        // TODO делег конструктор выше
+        // Р°С…Р°С…С…Р°С…Р°С…Р° СЌС‚Рѕ copy
+        // РЅРёРєРѕРіРґР° РЅРµ РґСѓРјР°Р» С‡С‚Рѕ memcpy РїСЂРёРєРѕР»СЊРЅРѕ С‡РёС‚Р°РµС‚СЃСЏ: "РњСЌРј, СЃСЂСѓ"
+        // TODO РґРµР»РµРі РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РІС‹С€Рµ
         constexpr vector(const vector& other) {
             m_allocator = allo_tr::select_on_container_copy_construction(other.get_allocator());
             copy(other);
         }
 
-        // TODO делег конструктор 2 выше
+        // TODO РґРµР»РµРі РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ 2 РІС‹С€Рµ
         constexpr vector(const vector& other, const_alloc_reference allocator)
             : m_allocator{ allocator } {
             copy(other);
@@ -126,7 +126,7 @@ namespace container {
         {
             // TODO check if noexcept
             // TODO use move iterators
-            // TODO делег на конструктор выше с итераторами
+            // TODO РґРµР»РµРі РЅР° РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РІС‹С€Рµ СЃ РёС‚РµСЂР°С‚РѕСЂР°РјРё
 
             if (allocator != other.get_allocator())
                 uninitialized_alloc_move(std::move(other));
@@ -172,7 +172,7 @@ namespace container {
 
         constexpr vector& operator=(init_list_type values)
         {
-            // TODO сначала удаляешь, а потом присваиваешь
+            // TODO СЃРЅР°С‡Р°Р»Р° СѓРґР°Р»СЏРµС€СЊ, Р° РїРѕС‚РѕРј РїСЂРёСЃРІР°РёРІР°РµС€СЊ
             destruct(m_size);
             if (values.size() > capacity())
                 reallocate(capacity(), values.size());
@@ -233,14 +233,14 @@ namespace container {
         }
 
         constexpr reference operator[](size_t index) {
-            // почему в std есть типа такого
+            // РїРѕС‡РµРјСѓ РІ std РµСЃС‚СЊ С‚РёРїР° С‚Р°РєРѕРіРѕ
             // assert(index < size() && "Index out of range");
 
             return m_vector[index];
         }
 
         constexpr const_reference operator[](size_t index) const {
-            // почему в std есть типа такого
+            // РїРѕС‡РµРјСѓ РІ std РµСЃС‚СЊ С‚РёРїР° С‚Р°РєРѕРіРѕ
             // assert(index < size() && "Index out of range");
 
             return m_vector[index];
@@ -468,7 +468,7 @@ namespace container {
 
         template<typename...Args>
         constexpr reference emplace_back(Args&&...args) {
-            // TODO для ускорения можешь скопировать кусок кода сверху
+            // TODO РґР»СЏ СѓСЃРєРѕСЂРµРЅРёСЏ РјРѕР¶РµС€СЊ СЃРєРѕРїРёСЂРѕРІР°С‚СЊ РєСѓСЃРѕРє РєРѕРґР° СЃРІРµСЂС…Сѓ
             emplace(end(), std::forward<Args>(args)...);
             return *(m_vector + size() - 1);
         }
@@ -518,7 +518,7 @@ namespace container {
         }
 
         constexpr void reallocate(size_t old_cap, size_t new_cap) {
-            // TODO if dealoc выкинет ошибку, то все пропало
+            // TODO if dealoc РІС‹РєРёРЅРµС‚ РѕС€РёР±РєСѓ, С‚Рѕ РІСЃРµ РїСЂРѕРїР°Р»Рѕ
             deallocate(old_cap);
             allocate(new_cap);
         }
@@ -564,7 +564,7 @@ namespace container {
         }
 
         constexpr void uninitialized_alloc_copy(const vector& other) {
-            // TODO обрабокта ошибок
+            // TODO РѕР±СЂР°Р±РѕРєС‚Р° РѕС€РёР±РѕРє
             m_size = other.m_size;
 
             for (size_t index = 0; index < m_size; ++index)
